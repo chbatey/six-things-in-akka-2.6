@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+//#options
+option java_multiple_files = true;
+option java_package = "info.batey.akka";
+option java_outer_classname = "UserProto";
+
+package user;
+
+service UserService {
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserReply) {}
+
+}
+message UpdateUserRequest {
+    string name = 1;
+    string description = 2;
+}
+message UpdateUserReply {
+    string response = 1;
+}

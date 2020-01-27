@@ -1,0 +1,20 @@
+* Examples for six things in Akka 2.6 talk
+
+5 minutes per topic, quick fire, links to finding out more
+
+** Mutual exclusion with an Actor
+
+** Event sourcing
+
+** Work distribution
+
+** State distribution
+
+** Data local processing from Kafka
+
+** gRPC
+
+* Tasks
+
+** TODO [#A] create code examples
+** TODO [#B] create slides
