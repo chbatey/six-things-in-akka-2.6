@@ -38,14 +38,15 @@ object WorkManager {
     producerController ! WorkPullingProducerController.Start(requestNextAdapter)
 
     Behaviors.withStash(1000) { stash =>
-      def idle(demand: RequestNext[WorkerCommand]): Behavior[Command] = Behaviors.receiveMessage[Command] {
+      def workerHasDemand(demand: RequestNext[WorkerCommand]): Behavior[Command] = Behaviors.receiveMessage[Command] {
         case SubmitWork(work) =>
           ctx.log.info("Executing work {} to {}", work, demand)
           demand.sendNextTo ! DoWork(work)
           ctx.log.info("switching to awaiting demand")
           awaitingDemand()
         case RequestNextWrapper(next) =>
-          throw new IllegalStateException(s"Received request next when idle. Old ${demand} new ${next}")
+          // FIXMME, this is probably wrong
+          throw new IllegalStateException(s"Received request next when workerHasDemand. Old ${demand} new ${next}")
       }
 
       def awaitingDemand(): Behavior[Command] = Behaviors.receiveMessage[Command] {
@@ -56,7 +57,7 @@ object WorkManager {
         case RequestNextWrapper(next) =>
           ctx.log.info("Demand received. Unstashing work if any. {}", next)
           ctx.log.info("switching to idle")
-          stash.unstash(idle(next), 1, identity)
+          stash.unstash(workerHasDemand(next), 1, identity)
       }
 
       awaitingDemand()

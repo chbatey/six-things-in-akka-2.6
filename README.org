@@ -1,20 +1,133 @@
-* Examples for six things in Akka 2.6 talk
+
+* Six things in Akka 2.6 talk
 
 5 minutes per topic, quick fire, links to finding out more
 
+
+In this talk we'll highlight six features of Akka 2.6.
+ - Mutual exclusion: Sharing state between multiple requests with the new Actor APIs
+ - Event sourcing: Modelling state as events
+ - Work distribution: Distributing work across machines with retries and flow control
+ - Distributed state: Distribute event sourced actors across machines and route requests
+ - Distributed processing: Co-locate stateful data processing with Kafka consumers
+ - gRPC: Front all of this via gRPC
+
+Akka 2.6 introduces improved or a new way of doing each of these tasks with new APIs
+for event sourcing, sharding, and new features for reliable messaging and co-locating
+sharded actors with Kafka consumers.
+
 ** Mutual exclusion with an Actor
+
+
+*** State shared between requests
+
+If each request into your application is independent then the service is trivial.
+
+What happens when requests need to share state?
+- Mutexes? Works until you have more than one node.
+- Communicate via the database? Works until the database becomes the bottleneck
+
+An actor is a good tool for this, let's see it in action.
+
 
 ** Event sourcing
 
+
+*** What is event sourcing?
+
+Event sourcing is a technique for modelling application state as events rather than mutable state.
+
+Bank account is the canonical example.
+
+*** Event sourcing with Akka
+
+Define your commands, events, state, and business logic let Akka do the rest.
+
+Let's see this in action.
+
+*** The nitty gritty details
+
+Persistence plugins: Cassandra, JDBC, Couchbase, and file based
+Others: Dynamo, inmem for testing...
+
+Snapshotting
+
+Event evolution
+
+
 ** Work distribution
+
+
+*** Usecase: Distribute work across machines
+
+Harder than it looks
+
+<Image for how this works in practice>
+- Worker registration
+- Acking work
+- Flow control
+- Failed workers
+
+*** Akka Cluster and Reliable delivery
+
+Handles all the hard bits so you can write your business logic.
+
+Let's see this in action.
+
 
 ** State distribution
 
+
+*** Event sourcing: single writer
+
+Typically when event sourcing you are combining S x E => S
+C x S => E, where the events derive the S
+
+How do you preserve single writer in a distributed application?
+- Lot's of data base locking?
+
+*** Akka Cluster Sharding
+
+Let Akka handle the starting, stopping, and moving of the persistent entities.
+You just write your business logic.
+Let's see it in action.
+
+<diagram/animation for how this works>
+
+
 ** Data local processing from Kafka
+
+
+*** Use case: Stateful data processing
+
+Rather than just a request response, build an application that streams data about a topic e.g. users, accounts, devices,
+process that per entity while also exposing the state of each entity in real time.
+
+<diagram to show how this needs to work>
+
+*** Combine Sharding with Event Sourcing
+
+Let's see that in action.
+
 
 ** gRPC
 
+
+*** Finally, accessing all this goodness from the outside world!
+
+We'll combine event sourcing, sharding, stream processing, and gRPC to show how an end to end distributed application
+might look like.
+
+<diagram/animation showing gRPC requests, messages from a Kafka topic and the state aggregated via event sourcing and
+cluster sharding>
+
+**** TODO: gRPC client, use reflection?
+
+
 * Tasks
 
-** TODO [#A] create code examples
-** TODO [#B] create slides
+** [X] create code examples
+** [ ] Make all code samples run in isolation
+** [ ] Make examples run as part of a cluster? Or at least add instructions
+** [ ] Create diagrams
+** [ ] Create slides

@@ -11,6 +11,11 @@ object ShardedAccount {
 
   val TypeKey = EntityTypeKey[Account.Command]("Account")
 
+  /**
+   * Start this on every node in a cluster.
+   * 
+   * Send messages to the returned ActorRef
+   */
   def init(system: ActorSystem[_]): ActorRef[ShardingEnvelope[Account.Command]]= {
     val entity = Entity(TypeKey) { entityContext =>
       Account(entityContext.entityId)

@@ -22,6 +22,7 @@ object Worker {
     // Start consuming WorkerCommands via reliable delivery 
     consumerController ! ConsumerController.Start(deliveryAdapter)
 
+    // FIXME, this is going away and registration automatic
     // Register with the cluster receptionish so that a work manager producer controller can find
     // the worker
     ctx.system.receptionist ! Receptionist.Register(WorkManagerServiceKey, consumerController)

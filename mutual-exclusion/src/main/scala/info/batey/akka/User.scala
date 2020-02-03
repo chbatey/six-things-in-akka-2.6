@@ -1,49 +1,39 @@
-package info.batey.akka
+package info.batey.akka.mutual
 
 import akka.actor.typed._
 import akka.actor.typed.scaladsl._
+import akka.Done
 
-//#actor
-object User {
 
-  final case class User(name: String, description: String)
+object Account {
 
   sealed trait Command
-  case class GetUser(replyTo: ActorRef[User]) extends Command
-  case class UpdateUser(name: String, description: String) extends Command
+  final case class Withdraw(amount: Long, ack: ActorRef[WithdrawlResponse]) extends Command
+  final case class Deposit(amount: Long, ack: ActorRef[Done]) extends Command
+  final case class GetBalance(replyTo: ActorRef[Long]) extends Command
 
-  def apply(id: String): Behavior[Command] = {
+  sealed trait WithdrawlResponse
+  case object Ack extends WithdrawlResponse
+  case object InsufficientFunds extends WithdrawlResponse
 
-    def user(u: User): Behavior[Command] = {
-      Behaviors.receiveMessage {
-        case GetUser(replyTo) =>
-          replyTo ! u
+  def apply(balance: Long = 0L): Behavior[Command] = {
+    Behaviors.receiveMessage {
+      case Withdraw(amount, ack) =>
+        // Two concurrent withdrawls?
+        if (balance > amount) {
+          ack ! Ack 
+          Account(balance - amount)
+        } else {
+          ack ! InsufficientFunds
           Behaviors.same
-        case UpdateUser(name: String, description: String) =>
-          user(User(name, description))
-      }
+        }
+      case Deposit(amount, ack) =>
+        ack ! Done
+        Account(balance + amount)
+      case GetBalance(replyTo) =>
+        replyTo ! balance
+        Behaviors.same
     }
-
-    user(User("", ""))
-  }
-}
-//#actor
-
-//#mutable
-class User {
-
-  private var name: String = ""
-  private var description: String = ""
-
-  def updateUser(name: String, desciption: String): Unit = {
-    this.name = name
-    this.description = description
   }
 
 }
-
-//#mutable
-
-//#imutable
-final case class UserImmutable(name: String, desciption: String) 
-//#imutable

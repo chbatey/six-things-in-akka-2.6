@@ -27,6 +27,7 @@ object Main {
       manager ! SubmitWork(Work("Super important work"))
       manager ! SubmitWork(Work("Event better work"))
       manager ! SubmitWork(Work("The last piece of work"))
+
       Behaviors.empty
     }
 

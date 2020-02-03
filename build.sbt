@@ -2,8 +2,6 @@ import Dependencies._
 
 name := "six-things-in-akka-2.6"
 
-val akkaVersion = "2.6.1"
-
 ThisBuild / version := "1.0"
 ThisBuild / scalaVersion := "2.13.1"
 
@@ -40,4 +38,5 @@ lazy val distributedProcessing = (project in file("distributed-processing"))
   .settings(
     libraryDependencies ++= DistributedProcessingDeps
   )
+  .dependsOn(stateDistribution)
   .enablePlugins(AkkaGrpcPlugin)
