@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val AkkaVersion = "2.6.1+194-f74acc4d"
+  val AkkaVersion = "2.6.3+93-a0f4edc2"
   val AlpakkaKakfaVersion = "2.0.1"
 
   val Akka = "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion

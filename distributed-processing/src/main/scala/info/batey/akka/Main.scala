@@ -14,8 +14,6 @@ import akka.cluster.sharding.typed.ShardingEnvelope
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import akka.Done
-import info.batey.akka.Account.Withdraw
-import info.batey.akka.Account.Deposit
 import akka.util.Timeout
 import scala.concurrent.duration._
 import scala.concurrent.Future
@@ -24,6 +22,9 @@ import akka.http.scaladsl._
 import akka.http.scaladsl.model._
 import akka.actor.typed.scaladsl.adapter._
 import akka.actor.typed.ActorRef
+import info.batey.akka.events.Account.Withdraw
+import info.batey.akka.events.Account.Deposit
+import info.batey.akka.events.Account
 
 object Main {
 
@@ -76,7 +77,7 @@ object Main {
       Behaviors.empty
 
     }
-    val system = ActorSystem[Nothing](guardianBehavior, "DistributedProcessing")
+    val system = ActorSystem[Nothing](guardianBehavior, "Distributed-Processing")
   }
 
   def startGrpc(sharding: ActorRef[ShardingEnvelope[Account.Command]], mat: Materializer, frontEndPort: Int)(

@@ -6,6 +6,7 @@ import akka.cluster.sharding.typed.scaladsl.Entity
 import akka.cluster.sharding.typed.scaladsl.EntityTypeKey
 import akka.actor.typed.ActorRef
 import akka.cluster.sharding.typed.ShardingEnvelope
+import info.batey.akka.events.Account
 
 object ShardedAccount {
 

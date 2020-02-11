@@ -62,8 +62,8 @@ object Account {
    */
   def apply(accountId: String): Behavior[Command] = {
     EventSourcedBehavior[Command, Event, State](
-      PersistenceId.ofUniqueId(accountId),
-      State(0L),
+      persistenceId = PersistenceId.ofUniqueId(accountId),
+      emptyState = State(0L),
       commandHandler = commandHandler,
       eventHandler = (state, event) => state.applyEvent(event)
     )

@@ -31,7 +31,7 @@ object Worker {
       case DeliverWork(job) =>
         ctx.log.info("Doing some hard work {} nr {}", job.msg, job.seqNr)
 
-        // This can happen asynchronoysly. Reliable delivery will keep track of unconfired messages
+        // This can happen asynchronously. Reliable delivery will keep track of unconfired messages
         // and retry after a timeout
         job.confirmTo ! Confirmed(job.seqNr)
         Behaviors.same

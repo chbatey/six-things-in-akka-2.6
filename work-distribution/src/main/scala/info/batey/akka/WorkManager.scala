@@ -18,6 +18,8 @@ import akka.actor.typed.scaladsl.StashBuffer
   *  - Split work in SubmitWork into chunks?
   */
 object WorkManager {
+
+  // Protocol to send work to the work manager 
   sealed trait Command
   final case class SubmitWork(work: Work) extends Command
   private final case class RequestNextWrapper(next: RequestNext[WorkerCommand]) extends Command
@@ -42,11 +44,10 @@ object WorkManager {
         case SubmitWork(work) =>
           ctx.log.info("Executing work {} to {}", work, demand)
           demand.sendNextTo ! DoWork(work)
-          ctx.log.info("switching to awaiting demand")
-          awaitingDemand()
-        case RequestNextWrapper(next) =>
-          // FIXMME, this is probably wrong
-          throw new IllegalStateException(s"Received request next when workerHasDemand. Old ${demand} new ${next}")
+          stash.unstash(awaitingDemand(), 1, identity)
+        case rnw: RequestNextWrapper =>
+          stash.stash(rnw)
+          Behaviors.same
       }
 
       def awaitingDemand(): Behavior[Command] = Behaviors.receiveMessage[Command] {
@@ -56,7 +57,6 @@ object WorkManager {
           Behaviors.same
         case RequestNextWrapper(next) =>
           ctx.log.info("Demand received. Unstashing work if any. {}", next)
-          ctx.log.info("switching to idle")
           stash.unstash(workerHasDemand(next), 1, identity)
       }
 
