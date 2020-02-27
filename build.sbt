@@ -38,5 +38,5 @@ lazy val distributedProcessing = (project in file("distributed-processing"))
   .settings(
     libraryDependencies ++= DistributedProcessingDeps
   )
-  .dependsOn(stateDistribution)
+  .dependsOn()
   .enablePlugins(AkkaGrpcPlugin)

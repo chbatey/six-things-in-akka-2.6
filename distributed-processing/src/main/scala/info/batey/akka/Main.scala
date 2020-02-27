@@ -28,7 +28,6 @@ import info.batey.akka.events.Account
 
 object Main {
 
-  // TODO how do we share the Akka one?
   val objectMapper: ObjectMapper = new ObjectMapper()
   objectMapper.registerModule(DefaultScalaModule)
 
@@ -39,8 +38,10 @@ object Main {
   def main(args: Array[String]): Unit = {
 
     val guardianBehavior: Behavior[Nothing] = Behaviors.setup[Nothing] { ctx =>
+
       implicit val timeout = Timeout(5.seconds)
       implicit val system = ctx.system
+
       // Start sharded actor, do this on every node
       val accounts = ShardedAccount.init(ctx.system)
 
@@ -52,11 +53,8 @@ object Main {
           .withGroupId("group1")
 
       val subscriptions = Subscriptions.topics("accounts")
-      // For the ask to cluster sharding
 
-      // TODO: Wrap in a RestartSource to deal with failures
-      // TODO: retry messages?
-      // TODO: commitable source?
+      // New in Akka 2.6 - ?
       val processKafkaTopic = Consumer
         .plainSource(consumerSettings, subscriptions)
         .mapAsync(100) { record =>
@@ -77,6 +75,7 @@ object Main {
       Behaviors.empty
 
     }
+
     val system = ActorSystem[Nothing](guardianBehavior, "Distributed-Processing")
   }
 

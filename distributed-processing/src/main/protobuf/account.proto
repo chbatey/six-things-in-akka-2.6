@@ -9,11 +9,12 @@ package accounts;
 service AccountsService {
     // Simple request response, also supports streaming via Akka streams
     rpc GetAccountBalance(GetAccountBalanceRequest) returns (GetAccountBalanceReply) {}
-
 }
+
 message GetAccountBalanceRequest {
     string account_id = 1;
 }
+
 message GetAccountBalanceReply {
     int64 balance = 1;
 }

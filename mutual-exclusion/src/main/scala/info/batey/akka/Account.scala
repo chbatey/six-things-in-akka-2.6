@@ -18,18 +18,18 @@ object Account {
 
   def apply(balance: Long = 0L): Behavior[Command] = {
     Behaviors.receiveMessage {
+      case Deposit(amount, ack) =>
+        ack ! Done
+        Account(balance + amount)
       case Withdraw(amount, ack) =>
         // Two concurrent withdrawls?
-        if (balance > amount) {
+        if (balance >= amount) {
           ack ! Ack 
           Account(balance - amount)
         } else {
           ack ! InsufficientFunds
           Behaviors.same
         }
-      case Deposit(amount, ack) =>
-        ack ! Done
-        Account(balance + amount)
       case GetBalance(replyTo) =>
         replyTo ! balance
         Behaviors.same

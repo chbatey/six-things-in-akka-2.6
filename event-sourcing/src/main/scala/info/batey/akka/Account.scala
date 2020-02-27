@@ -65,6 +65,7 @@ object Account {
       persistenceId = PersistenceId.ofUniqueId(accountId),
       emptyState = State(0L),
       commandHandler = commandHandler,
+      // State x Event => State
       eventHandler = (state, event) => state.applyEvent(event)
     )
   }

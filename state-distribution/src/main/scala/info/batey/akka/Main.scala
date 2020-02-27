@@ -26,6 +26,6 @@ object Main {
         Behaviors.same
       }
     }
-    val system = ActorSystem(rootBehavior, "StateDistribution")
+    val system = ActorSystem(rootBehavior, "State-Distribution")
   }
 }

@@ -14,7 +14,6 @@ import info.batey.akka.events.Account.GetBalance
 class AccountsServiceImpl(accounts: ActorRef[ShardingEnvelope[Account.Command]])(implicit val system: ActorSystem[_])
     extends AccountsService {
 
-  // TODO config
   implicit val timeout = Timeout(5.seconds)
   import system.executionContext
 

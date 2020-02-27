@@ -19,14 +19,14 @@ import akka.actor.typed.scaladsl.StashBuffer
   */
 object WorkManager {
 
+  // Protocol for workers to implement
+  sealed trait WorkerCommand
+  final case class DoWork(work: Work) extends WorkerCommand
+
   // Protocol to send work to the work manager 
   sealed trait Command
   final case class SubmitWork(work: Work) extends Command
   private final case class RequestNextWrapper(next: RequestNext[WorkerCommand]) extends Command
-
-  // Protocol for workers to implement
-  sealed trait WorkerCommand
-  final case class DoWork(work: Work) extends WorkerCommand
 
   // Service for discovering workers
   val WorkManagerServiceKey = ServiceKey[ConsumerController.Command[WorkerCommand]]("WorkManager")
